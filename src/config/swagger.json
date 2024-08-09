@@ -1,0 +1,167 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Encurtador de",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "host": "localhost:3001",
+  "basePath": "/",
+  "schemes": ["http"],
+  "paths": {
+    "/user/create": {
+      "post": {
+        "description": "",
+        "tags": ["user"],
+        "parameters": [
+          {
+            "name": "userRegistrationData",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserRegistrationData"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Response",
+            "schema": {
+              "$ref": "#/definitions/UserRegistrationData"
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "description": "login",
+        "tags": ["user"],
+        "parameters": [
+          {
+            "name": "login",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["email", "password"],
+              "properties": {
+                "email": {
+                  "required": true,
+                  "type": "string",
+                  "example": "user_test1@gmail.com"
+                },
+                "password": {
+                  "required": true,
+                  "type": "string",
+                  "example": "123456"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful login"
+          }
+        }
+      }
+    },
+    "/user/reset": {
+      "put": {
+        "summary": "Reset password",
+        "description": "This endpoint reset a password and a new token",
+        "tags": ["user"],
+        "parameters": [
+          {
+            "name": "reset",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["email", "newPassword", "oldPassoword"],
+              "properties": {
+                "email": {
+                  "required": true,
+                  "type": "string",
+                  "example": "user_test1@gmail.com"
+                },
+                "newPassword": {
+                  "required": true,
+                  "type": "string",
+                  "example": "123456"
+                },
+                "oldPassoword": {
+                  "required": true,
+                  "type": "string",
+                  "example": "654321"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "nullable": false,
+                  "example": "e2bd6560-c8fc-4478-a099-cd7fde642c43"
+                },
+                "username": {
+                  "type": "string",
+                  "nullable": false,
+                  "example": "maria"
+                },
+                "create_at": {
+                  "type": "string",
+                  "nullable": false,
+                  "example": "2023-03-16T16:35:38.161Z"
+                },
+                "updated_at": {
+                  "type": "string",
+                  "nullable": true,
+                  "example": "2023-03-16T16:35:38.161Z"
+                },
+                "token": {
+                  "type": "string",
+                  "nullable": false,
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "UserRegistrationData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "required": false,
+          "type": "string",
+          "example": "e2bd6560-c8fc-4478-a099-cd7fde642c43"
+        },
+        "email": {
+          "required": true,
+          "type": "string",
+          "example": "user_123@gmail.com"
+        },
+        "createdAt": {
+          "required": true,
+          "type": "string",
+          "example": "2024-08-09T02:03:46.248Z"
+        },
+        "updatedAt": {
+          "required": false,
+          "type": "string",
+          "example": "2024-08-09T02:03:46.248Z"
+        }
+      }
+    }
+  }
+}

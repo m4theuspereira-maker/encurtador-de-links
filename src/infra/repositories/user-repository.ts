@@ -8,21 +8,10 @@ export class UserRepository {
   async create(email: string, password: string) {
     try {
       return this.client.user.create({
-        data: { id: uuidv4(), email, password }
-      });
-    } catch (error) {
-      throw new InternalServerErrorExpection(error);
-    }
-  }
-
-  async findById(id: string) {
-    try {
-      return this.client.user.findFirst({
-        where: { id, deletedAt: null },
+        data: { id: uuidv4(), email, password },
         select: {
           id: true,
           email: true,
-          password: true,
           createdAt: true,
           updatedAt: true
         }
@@ -32,25 +21,20 @@ export class UserRepository {
     }
   }
 
-  async countByEmail(email: string) {
-    try {
-      return this.client.user.count({ where: { email } });
-    } catch (error) {
-      throw new InternalServerErrorExpection(error);
-    }
-  }
-
-  async find(input: any) {
+  async find(email: string) {
     try {
       return this.client.user.findFirst({
-        where: { ...input, deletedAt: null }
+        where: { email, deletedAt: null }
       });
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
   }
 
-  async update(id: string, updatePayload: any) {
+  async update(
+    id: string,
+    updatePayload: { email?: string; password?: string }
+  ) {
     try {
       return this.client.user.update({
         where: { id },

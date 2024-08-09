@@ -1,12 +1,12 @@
 import { Response } from "express";
 
 export const serverError = (res: Response, error: any): Response => {
-  return res.status(500).json({ body: error.message });
+  return res.status(500).json({ error: error.message });
 };
 
 export const ok = (res: Response, data?: any): Response => {
   if (Array.isArray(data)) {
-    return res.status(200).json({ body: { count: data.length, data } });
+    return res.status(200).json({ count: data.length, data });
   }
 
   if (!data) {
@@ -17,10 +17,6 @@ export const ok = (res: Response, data?: any): Response => {
 };
 export const notFoundError = (res: Response, message: string): Response => {
   return res.status(404).json({ error: message });
-};
-
-export const unpaidError = (res: Response, message: any): Response => {
-  return res.status(402).json(message);
 };
 
 export const unauthorizedError = (res: Response, message: any): Response => {

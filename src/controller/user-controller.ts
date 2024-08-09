@@ -33,12 +33,12 @@ export class UserController {
 
   resetPassword = async (req: Request, res: Response) => {
     try {
-      const { username, old_password, new_password } = req.body;
+      const { email, oldPassword, newPassword } = req.body;
 
       const userLogged = await this.userService.resetPassword(
-        username,
-        old_password,
-        new_password
+        email,
+        oldPassword,
+        newPassword
       );
 
       return ok(res, userLogged);

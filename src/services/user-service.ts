@@ -25,7 +25,7 @@ export class UserService {
 
   async login(email: string, password: string) {
     try {
-      const userFound = await this.userRepository.find({ email });
+      const userFound = await this.userRepository.find(email);
 
       if (!userFound) {
         return null;
@@ -52,13 +52,9 @@ export class UserService {
     }
   }
 
-  async resetPassword(
-    username: string,
-    oldPassword: string,
-    newPassword: string
-  ) {
+  async resetPassword(email: string, oldPassword: string, newPassword: string) {
     try {
-      const userFound = await this.userRepository.find({ username });
+      const userFound = await this.userRepository.find(email);
 
       if (!userFound) {
         return null;
@@ -86,12 +82,14 @@ export class UserService {
       }
 
       const token = this.encryptionService.encryptToken(
-        username,
+        email,
         newPassword,
         userFound.id
       );
 
-      return { ...userUpdated, token };
+      const { id, createdAt, updatedAt } = userUpdated;
+
+      return { id, createdAt, updatedAt, email, token };
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }

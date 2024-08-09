@@ -1,13 +1,19 @@
 import { Router } from "express";
-import {
-  controllerFactory,
-  userControllerFactory
-} from "./factories/controller-factories";
+import { userControllerFactory } from "./factories/controller-factories";
+import { ValidationMiddlewares } from "./middlewares/validation-middlewares";
 
 const routes = Router();
 const userController = userControllerFactory();
 
-routes.get("/user/create", userController.createUser);
-routes.post("/user/login", userController.login);
-routes.put("/user/reset", userController.resetPassword);
+routes.post(
+  "/user/create",
+  ValidationMiddlewares.createUser,
+  userController.createUser
+);
+routes.post("/user/login", ValidationMiddlewares.login, userController.login);
+routes.put(
+  "/user/reset",
+  ValidationMiddlewares.resetPassword,
+  userController.resetPassword
+);
 export { routes };
