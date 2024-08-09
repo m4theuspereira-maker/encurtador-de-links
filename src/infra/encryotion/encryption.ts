@@ -1,10 +1,10 @@
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import { APP_SECRET } from "../../config/environment-consts";
 import { InternalServerErrorExpection } from "../errors/errors";
+import { APP_SECRET } from "../../common/environment-consts";
 
 interface IDecryptedTokenData {
-  role: string;
+  email: string;
   id: string;
 }
 
@@ -13,7 +13,7 @@ export class Encryption {
     try {
       return await bcrypt.hash(password, 8);
     } catch (error) {
-      throw new InternalServerErrorExpection();
+      throw new InternalServerErrorExpection(error);
     }
   }
 
@@ -24,13 +24,8 @@ export class Encryption {
     return await bcrypt.compare(password, userSavedPassword);
   }
 
-  encryptToken(
-    username: string,
-    password: string,
-    role: string,
-    id: number
-  ): string {
-    return jwt.sign({ username, password, role, id }, APP_SECRET as string, {
+  encryptToken(email: string, password: string, id: string): string {
+    return jwt.sign({ email, password, id }, APP_SECRET as string, {
       expiresIn: "1d"
     });
   }
@@ -38,11 +33,11 @@ export class Encryption {
   verifyEncryptedToken(authorization: string): IDecryptedTokenData {
     const [, token] = authorization.split(" ");
 
-    const { role, id } = jwt.verify(
+    const { email, id } = jwt.verify(
       token,
       APP_SECRET as string
     ) as IDecryptedTokenData;
 
-    return { role, id };
+    return { email, id };
   }
 }

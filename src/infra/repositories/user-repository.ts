@@ -39,4 +39,28 @@ export class UserRepository {
       throw new InternalServerErrorExpection(error);
     }
   }
+
+  async find(input: any) {
+    try {
+      return this.client.user.findFirst({
+        where: { ...input, deletedAt: null }
+      });
+    } catch (error) {
+      throw new InternalServerErrorExpection(error);
+    }
+  }
+
+  async update(id: string, updatePayload: any) {
+    try {
+      return this.client.user.update({
+        where: { id },
+        data: {
+          ...updatePayload,
+          updatedAt: new Date()
+        }
+      });
+    } catch (error) {
+      throw new InternalServerErrorExpection(error);
+    }
+  }
 }
