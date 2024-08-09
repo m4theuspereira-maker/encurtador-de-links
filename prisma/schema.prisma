@@ -13,10 +13,31 @@ datasource db {
 }
 
 model user {
-  id        String    @id @db.Uuid
-  email     String
-  password  String    @db.VarChar(250)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime?
-  deletedAt DateTime?
+  id          String     @id @default(uuid())
+  email       String
+  password    String     @db.VarChar(250)
+  shortUrlIds shortUrl[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime?
+  deletedAt   DateTime?
+
+  @@index([email, deletedAt])
+  @@index([updatedAt])
+}
+
+model shortUrl {
+  id          String    @id @default(uuid())
+  shortId     String
+  userId      String?   @db.Uuid
+  user        user?     @relation(fields: [userId], references: [id])
+  totalVisits Int       @default(0)
+  lastVisit   DateTime?
+  redirectUrl String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
+  deletedAt   DateTime?
+
+  @@index([userId])
+  @@index([shortId, deletedAt])
+  @@index([redirectUrl, deletedAt])
 }
