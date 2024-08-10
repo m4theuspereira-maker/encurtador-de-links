@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import Joi from "joi";
+import Joi, { custom } from "joi";
 
 interface IValidator {
   params?: Joi.Schema;
   query?: Joi.Schema;
   body?: Joi.Schema;
+  headers?: Joi.Schema;
 }
 
 export class Validator {
@@ -71,6 +72,47 @@ export class ValidationMiddlewares extends Validator {
         email: Joi.string().required().email(),
         newPassword: Joi.string().required().length(8),
         oldPassword: Joi.string().required().length(8)
+      })
+    };
+
+    return this.validate(req, res, next, schema);
+  };
+
+  static validateTokenPattern = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const schema = {
+      headers: Joi.object({
+        authorization: Joi.string()
+          .required()
+          .pattern(/^Bearer\s[\w-]+\.[\w-]+\.[\w-]+$/)
+          .required()
+          .messages({
+            "string.pattern.base":
+              "The authorization field must follow the pattern: Bearer <token>",
+            "any.required": "authorization field is required"
+          })
+      }).unknown(true)
+    };
+
+    return this.validate(req, res, next, schema);
+  };
+
+  static updateRedirectUrl = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const schema = {
+      body: Joi.object({
+        redirectUrl: Joi.string()
+          .required()
+          .uri({ scheme: ["http", "https"] })
+      }),
+      params: Joi.object({
+        shortUrlId: Joi.string().required().uuid()
       })
     };
 

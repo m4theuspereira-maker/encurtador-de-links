@@ -21,9 +21,9 @@ export class UserController {
 
   login = async (req: Request, res: Response) => {
     try {
-      const { username, password } = req.body;
+      const { email, password } = req.body;
 
-      const userLogged = await this.userService.login(username, password);
+      const userLogged = await this.userService.login(email, password);
 
       return ok(res, userLogged);
     } catch (error) {

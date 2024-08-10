@@ -5,7 +5,11 @@ import { ShortUrl } from "./types/types";
 export class ShortUrlRepository {
   constructor(private readonly client: PrismaClient) {}
 
-  async createShortUrl(shortId: string, redirectUrl: string, userId?: string) {
+  async createShortUrl(
+    shortId: string,
+    redirectUrl: string,
+    userId: string | null
+  ) {
     try {
       return this.client.shortUrl.create({
         data: { shortId, redirectUrl, userId }
@@ -25,10 +29,16 @@ export class ShortUrlRepository {
     }
   }
 
-  async findMany(shortUrl: ShortUrl) {
+  async findManyByUserId(userId: string) {
     try {
       return this.client.shortUrl.findMany({
-        where: { ...shortUrl, deletedAt: null }
+        where: {
+          userId: {
+            not: null,
+            equals: userId
+          },
+          deletedAt: null
+        }
       });
     } catch (error) {
       throw new InternalServerErrorExpection(error);

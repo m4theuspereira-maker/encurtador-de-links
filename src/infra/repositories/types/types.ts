@@ -1,4 +1,5 @@
 export type ShortUrl = {
+  id?: string;
   shortId?: string;
   userId?: string;
   totalVisits?: number;

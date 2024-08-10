@@ -13,7 +13,7 @@ datasource db {
 }
 
 model user {
-  id          String     @id @default(uuid())
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   email       String
   password    String     @db.VarChar(250)
   shortUrlIds shortUrl[]
@@ -26,7 +26,7 @@ model user {
 }
 
 model shortUrl {
-  id          String    @id @default(uuid())
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   shortId     String
   userId      String?   @db.Uuid
   user        user?     @relation(fields: [userId], references: [id])
@@ -37,6 +37,7 @@ model shortUrl {
   updatedAt   DateTime?
   deletedAt   DateTime?
 
+  @@unique([id, userId])
   @@index([userId])
   @@index([shortId, deletedAt])
   @@index([redirectUrl, deletedAt])

@@ -1,5 +1,6 @@
 import { InternalServerErrorExpection } from "../infra/errors/errors";
 import { ShortUrlRepository } from "../infra/repositories/short-url-repository";
+import { ShortUrl } from "../infra/repositories/types/types";
 
 export class ShortUrlService {
   constructor(private readonly shortUrlRepository: ShortUrlRepository) {}
@@ -10,27 +11,43 @@ export class ShortUrlService {
 
       const shortIdFound = await this.shortUrlRepository.find({ shortId });
 
-      return !shortIdFound
-        ? await this.shortUrlRepository.createShortUrl(
-            shortId,
-            redirectUrl,
-            userId
-          )
-        : null;
+      if (shortIdFound) {
+        await this.generateShortUrl(redirectUrl, userId);
+      }
+
+      return this.shortUrlRepository.createShortUrl(
+        `http://localhost/${shortId}`,
+        redirectUrl,
+        userId || null
+      );
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
   }
 
-  async delete(shortId: string) {
+  async find(shortUrl: ShortUrl) {
     try {
-      const shortIdFound = await this.shortUrlRepository.find({ shortId });
+      return this.shortUrlRepository.find({ ...shortUrl });
+    } catch (error) {
+      throw new InternalServerErrorExpection(error);
+    }
+  }
 
-      return shortIdFound
-        ? this.shortUrlRepository.update(shortIdFound?.id!, {
-            deletedAt: new Date()
-          })
-        : null;
+  async delete(id: string) {
+    try {
+      return this.shortUrlRepository.update(id, {
+        deletedAt: new Date()
+      });
+    } catch (error) {
+      throw new InternalServerErrorExpection(error);
+    }
+  }
+
+  async updateRedirectUrl(id: string, redirectUrl: string) {
+    try {
+      return this.shortUrlRepository.update(id, {
+        redirectUrl
+      });
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
@@ -38,7 +55,7 @@ export class ShortUrlService {
 
   async findByUserId(userId: string) {
     try {
-      return this.shortUrlRepository.findMany({ userId });
+      return this.shortUrlRepository.findManyByUserId(userId);
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
@@ -47,9 +64,9 @@ export class ShortUrlService {
   private generateShortId() {
     let firstPart = (Math.random() * 46656) | 0;
     let secondPart = (Math.random() * 46656) | 0;
-    return `
-      ${("000" + firstPart.toString(36)).slice(-3)}
-      ${("000" + secondPart.toString(36)).slice(-3)}
-    `;
+    return (
+      ("000" + firstPart.toString(36)).slice(-3) +
+      ("000" + secondPart.toString(36)).slice(-3)
+    );
   }
 }

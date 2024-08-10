@@ -7,9 +7,32 @@ export class AuthenticationMiddlewares {
 
   requireAuthentication = (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { authorization } = req.headers as any;
+      const { authorization } = req.headers;
 
-      this.encryptionService.verifyEncryptedToken(authorization);
+      const { email, id } = this.encryptionService.verifyEncryptedToken(
+        String(authorization)
+      );
+      req.headers = { email, id };
+      next();
+    } catch (error) {
+      return unauthorizedError(res, "invalid token has been provided");
+    }
+  };
+
+  optionalAuthentication = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const { authorization } = req.headers;
+
+      if (authorization) {
+        const { email, id } = this.encryptionService.verifyEncryptedToken(
+          String(authorization)
+        );
+        req.headers = { email, id };
+      }
       next();
     } catch (error) {
       return unauthorizedError(res, "invalid token has been provided");

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Encurtador de",
+    "title": "Encurtador de URL",
     "version": "1.0.0",
     "description": ""
   },
@@ -141,25 +141,15 @@
     "UserRegistrationData": {
       "type": "object",
       "properties": {
-        "id": {
-          "required": false,
-          "type": "string",
-          "example": "e2bd6560-c8fc-4478-a099-cd7fde642c43"
-        },
         "email": {
           "required": true,
           "type": "string",
           "example": "user_123@gmail.com"
         },
-        "createdAt": {
+        "password": {
           "required": true,
           "type": "string",
-          "example": "2024-08-09T02:03:46.248Z"
-        },
-        "updatedAt": {
-          "required": false,
-          "type": "string",
-          "example": "2024-08-09T02:03:46.248Z"
+          "example": "123456"
         }
       }
     }
