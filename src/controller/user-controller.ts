@@ -1,6 +1,11 @@
 import { UserService } from "../services/user-service";
 import { Request, Response } from "express";
-import { ok, serverError } from "./handlers/handlers";
+import {
+  conflictError,
+  ok,
+  serverError,
+  unauthorizedError
+} from "./handlers/handlers";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -8,10 +13,16 @@ export class UserController {
     try {
       const { email, password } = req.body;
 
-      const userCreated = await this.userService.createUser({
-        email,
-        password
-      });
+      const userFound = await this.userService.find({ email });
+
+      if (userFound) {
+        return conflictError(
+          res,
+          `There is already registrated an user with email: ${email}`
+        );
+      }
+
+      const userCreated = await this.userService.createUser(email, password);
 
       return ok(res, userCreated);
     } catch (error) {
@@ -25,6 +36,10 @@ export class UserController {
 
       const userLogged = await this.userService.login(email, password);
 
+      if (!userLogged) {
+        return unauthorizedError(res, "email or password is invalid");
+      }
+
       return ok(res, userLogged);
     } catch (error) {
       return serverError(res, error);
@@ -35,13 +50,20 @@ export class UserController {
     try {
       const { email, oldPassword, newPassword } = req.body;
 
-      const userLogged = await this.userService.resetPassword(
+      const userReseted = await this.userService.resetPassword(
         email,
         oldPassword,
         newPassword
       );
 
-      return ok(res, userLogged);
+      if (!userReseted) {
+        return unauthorizedError(
+          res,
+          "The old password or email does not match with what is in our database"
+        );
+      }
+
+      return ok(res, userReseted);
     } catch (error) {
       return serverError(res, error);
     }

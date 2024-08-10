@@ -1,0 +1,41 @@
+{
+  "paths": {
+    "/{shortId}": {
+      "get": {
+        "summary": "Redirect to the original URL",
+        "description": "This endpoint redirects the user to the original URL associated with the short URL.",
+        "tags": ["shortUrl"],
+        "parameters": [
+          {
+            "name": "shortId",
+            "in": "path",
+            "required": true,
+            "description": "The short ID of the URL",
+            "type": "string",
+            "example": "bzigu3"
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to the original URL",
+            "headers": {
+              "Location": {
+                "description": "The original URL to which the request is redirected",
+                "schema": {
+                  "type": "string",
+                  "example": "https://example.com/some-original-url"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Short URL not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  }
+}

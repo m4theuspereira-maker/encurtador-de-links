@@ -7,3 +7,8 @@ export type ShortUrl = {
   redirectUrl?: string;
   deletedAt?: Date;
 };
+
+export type User = {
+  email?: string;
+  id?: string;
+};

@@ -1,3 +1,4 @@
+import { SHORT_URL_DOMAIN } from "../common/environment-consts";
 import { InternalServerErrorExpection } from "../infra/errors/errors";
 import { ShortUrlRepository } from "../infra/repositories/short-url-repository";
 import { ShortUrl } from "../infra/repositories/types/types";
@@ -15,11 +16,13 @@ export class ShortUrlService {
         await this.generateShortUrl(redirectUrl, userId);
       }
 
-      return this.shortUrlRepository.createShortUrl(
-        `http://localhost/${shortId}`,
-        redirectUrl,
-        userId || null
-      );
+      return (
+        await this.shortUrlRepository.createShortUrl(
+          `${SHORT_URL_DOMAIN}/${shortId}`,
+          redirectUrl,
+          userId || null
+        )
+      ).shortId;
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
@@ -56,6 +59,17 @@ export class ShortUrlService {
   async findByUserId(userId: string) {
     try {
       return this.shortUrlRepository.findManyByUserId(userId);
+    } catch (error) {
+      throw new InternalServerErrorExpection(error);
+    }
+  }
+
+  async incrementVisits(id: string, totalVisits: number) {
+    try {
+      await this.shortUrlRepository.update(id, {
+        totalVisits: totalVisits++,
+        lastVisit: new Date()
+      });
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }

@@ -68,7 +68,7 @@
       }
     },
     "/user/reset": {
-      "put": {
+      "patch": {
         "summary": "Reset password",
         "description": "This endpoint reset a password and a new token",
         "tags": ["user"],
@@ -79,7 +79,7 @@
             "required": true,
             "schema": {
               "type": "object",
-              "required": ["email", "newPassword", "oldPassoword"],
+              "required": ["email", "newPassword", "oldPassword"],
               "properties": {
                 "email": {
                   "required": true,
@@ -89,12 +89,12 @@
                 "newPassword": {
                   "required": true,
                   "type": "string",
-                  "example": "123456"
+                  "example": "12345678"
                 },
-                "oldPassoword": {
+                "oldPassword": {
                   "required": true,
                   "type": "string",
-                  "example": "654321"
+                  "example": "87654321"
                 }
               }
             }
@@ -132,6 +132,350 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/shortUrl/create": {
+      "post": {
+        "summary": "Create a new short URL",
+        "description": "This endpoint creates a new short URL from a provided URL.",
+        "tags": ["shortUrl"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Optional token for authorization. Use 'Bearer <token>'",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "redirectUrl",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "redirectUrl": {
+                  "type": "string",
+                  "example": "https://teddy360.com.br/material/marco-legal-das-garantias-sancionado-entenda-o-que-muda/",
+                  "description": "The URL to be shortened"
+                }
+              },
+              "required": ["redirectUrl"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Short URL successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "example": "http://localhost:3001/rodi5k",
+                  "description": "Short url generated"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/shortUrl/": {
+      "get": {
+        "summary": "Retrieve list of short URLs",
+        "description": "This endpoint retrieves a list of short URLs associated with the authenticated user.",
+        "tags": ["shortUrl"],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Required token for authorization. Use 'Bearer <token>'",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of short URLs retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "integer",
+                  "example": 1,
+                  "description": "Number of short URLs returned"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "8e2aa5cc-d7b4-4d03-8393-15d4130fc22e",
+                        "description": "Unique identifier for the short URL"
+                      },
+                      "shortId": {
+                        "type": "string",
+                        "example": "http://localhost/bmyfuc",
+                        "description": "The generated short URL"
+                      },
+                      "userId": {
+                        "type": "string",
+                        "example": "afd85d9d-4cdb-4e66-b260-6b0fed584738",
+                        "description": "ID of the user who created the short URL"
+                      },
+                      "totalVisits": {
+                        "type": "integer",
+                        "example": 0,
+                        "description": "Total number of visits to the short URL"
+                      },
+                      "lastVisit": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "description": "Timestamp of the last visit to the short URL"
+                      },
+                      "redirectUrl": {
+                        "type": "string",
+                        "example": "https://www.w3schools.com/jsref/prop_text_value.asp",
+                        "description": "The original URL that the short URL redirects to"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-08-10T16:29:54.777Z",
+                        "description": "Timestamp of when the short URL was created"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "description": "Timestamp of the last update to the short URL"
+                      },
+                      "deletedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "description": "Timestamp of when the short URL was deleted (if applicable)"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/shortUrl/update/{id}": {
+      "patch": {
+        "summary": "Update a short URL",
+        "description": "This endpoint updates the redirect URL of an existing short URL. Requires a valid authorization token.",
+        "tags": ["shortUrl"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the short URL to be updated",
+            "type": "string",
+            "example": "4e803510-9c3d-4297-bbed-d141d9ec7904"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token. Use 'Bearer <token>'",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "redirectUrl",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "description": "Data required to update the short URL",
+              "properties": {
+                "redirectUrl": {
+                  "type": "string",
+                  "example": "https://www.w3schools.com/jsref/prop_text_value.asp",
+                  "description": "The new URL that the short URL will redirect to"
+                }
+              },
+              "required": ["redirectUrl"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Short URL updated successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "example": "eef4f8b2-3280-4f09-a8a8-13beacd29770",
+                      "description": "Unique identifier for the short URL"
+                    },
+                    "shortId": {
+                      "type": "string",
+                      "example": "http://localhost:3001/4xh51w",
+                      "description": "The updated short URL"
+                    },
+                    "userId": {
+                      "type": "string",
+                      "example": "afd85d9d-4cdb-4e66-b260-6b0fed584738",
+                      "description": "ID of the user who owns the short URL"
+                    },
+                    "totalVisits": {
+                      "type": "integer",
+                      "example": 0,
+                      "description": "Total number of visits to the short URL"
+                    },
+                    "lastVisit": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": null,
+                      "description": "Timestamp of the last visit to the short URL"
+                    },
+                    "redirectUrl": {
+                      "type": "string",
+                      "example": "https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/null-and-undefined",
+                      "description": "The new redirect URL"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-08-10T19:35:48.282Z",
+                      "description": "Timestamp of when the short URL was created"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2024-08-10T19:36:54.761Z",
+                      "description": "Timestamp of when the short URL was last updated"
+                    },
+                    "deletedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": null,
+                      "description": "Timestamp of when the short URL was deleted (if applicable)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized request"
+          },
+          "404": {
+            "description": "Short URL not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/shortUrl/delete/{id}": {
+      "delete": {
+        "summary": "Delete a short URL",
+        "description": "This endpoint deletes an existing short URL. Requires a valid authorization token.",
+        "tags": ["shortUrl"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the short URL to be deleted",
+            "type": "string",
+            "example": "eef4f8b2-3280-4f09-a8a8-13beacd29770"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization token. Use 'Bearer <token>'",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Short URL deleted successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "string",
+                  "example": "Short URL deleted succesfully!",
+                  "description": "Confirmation message"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized request"
+          },
+          "404": {
+            "description": "Short URL not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/{shortId}": {
+      "get": {
+        "summary": "Redirect to the original URL",
+        "description": "This endpoint redirects the user to the original URL associated with the short URL.",
+        "tags": ["shortUrl"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "shortId",
+            "in": "path",
+            "required": true,
+            "description": "The short ID of the URL",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "301": {
+            "description": "Redirect",
+            "headers": {
+              "Location": {
+                "description": "The URL to which the client is redirected",
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "description": "CORS allowed origin",
+                "type": "string"
+              }
+            }
+          },
+          "404": {
+            "description": "Short URL not found"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }

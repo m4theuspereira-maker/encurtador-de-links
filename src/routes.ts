@@ -17,7 +17,7 @@ routes.post(
   userController.createUser
 );
 routes.post("/user/login", ValidationMiddlewares.login, userController.login);
-routes.put(
+routes.patch(
   "/user/reset",
   ValidationMiddlewares.resetPassword,
   userController.resetPassword
@@ -31,6 +31,7 @@ routes.get(
 );
 routes.post(
   "/shortUrl/create",
+  ValidationMiddlewares.validateRedirectUrl,
   authentication.optionalAuthentication,
   shortUrlController.createShortUrl
 );
@@ -42,9 +43,16 @@ routes.delete(
 );
 routes.patch(
   "/shortUrl/update/:shortUrlId",
-  ValidationMiddlewares.updateRedirectUrl,
+  ValidationMiddlewares.validateShortId,
+  ValidationMiddlewares.validateRedirectUrl,
   ValidationMiddlewares.validateTokenPattern,
   authentication.requireAuthentication,
   shortUrlController.updateRedirectUrl
+);
+
+routes.get(
+  "/:shortId",
+  ValidationMiddlewares.validateShortIdVisit,
+  shortUrlController.visitShortUrl
 );
 export { routes };

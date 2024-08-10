@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { InternalServerErrorExpection } from "../errors/errors";
-import { v4 as uuidv4 } from "uuid";
+import { User } from "./types/types";
 
 export class UserRepository {
   constructor(private readonly client: PrismaClient) {}
@@ -8,7 +8,7 @@ export class UserRepository {
   async create(email: string, password: string) {
     try {
       return this.client.user.create({
-        data: { id: uuidv4(), email, password },
+        data: { email, password },
         select: {
           id: true,
           email: true,
@@ -21,10 +21,10 @@ export class UserRepository {
     }
   }
 
-  async find(email: string) {
+  async find(user: User) {
     try {
       return this.client.user.findFirst({
-        where: { email, deletedAt: null }
+        where: { ...user, deletedAt: null }
       });
     } catch (error) {
       throw new InternalServerErrorExpection(error);

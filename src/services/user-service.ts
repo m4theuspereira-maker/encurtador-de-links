@@ -1,7 +1,7 @@
 import { Encryption } from "../infra/encryotion/encryption";
 import { InternalServerErrorExpection } from "../infra/errors/errors";
+import { User } from "../infra/repositories/types/types";
 import { UserRepository } from "../infra/repositories/user-repository";
-import { CreateUser } from "./types/types";
 
 export class UserService {
   constructor(
@@ -9,10 +9,8 @@ export class UserService {
     private readonly encryptionService: Encryption
   ) {}
 
-  async createUser(user: CreateUser) {
+  async createUser(email: string, password: string) {
     try {
-      const { email, password } = user;
-
       const passwordHashed = await this.encryptionService.hashPassword(
         password
       );
@@ -25,7 +23,7 @@ export class UserService {
 
   async login(email: string, password: string) {
     try {
-      const userFound = await this.userRepository.find(email);
+      const userFound = await this.find({ email });
 
       if (!userFound) {
         return null;
@@ -46,7 +44,15 @@ export class UserService {
         userFound.id
       );
 
-      return { email, password: userFound.password, token };
+      return { id: userFound.id, email, token };
+    } catch (error) {
+      throw new InternalServerErrorExpection(error);
+    }
+  }
+
+  async find(user: User) {
+    try {
+      return this.userRepository.find(user);
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
@@ -54,7 +60,7 @@ export class UserService {
 
   async resetPassword(email: string, oldPassword: string, newPassword: string) {
     try {
-      const userFound = await this.userRepository.find(email);
+      const userFound = await this.find({ email });
 
       if (!userFound) {
         return null;

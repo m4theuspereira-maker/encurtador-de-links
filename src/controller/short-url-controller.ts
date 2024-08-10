@@ -4,8 +4,10 @@ import {
   conflictError,
   notFoundError,
   ok,
+  redirect,
   serverError
 } from "./handlers/handlers";
+import { SHORT_URL_DOMAIN } from "../common/environment-consts";
 
 export class ShortUrlController {
   constructor(private readonly shortUrlService: ShortUrlService) {}
@@ -21,7 +23,7 @@ export class ShortUrlController {
       });
 
       if (redirectUrlFound) {
-        return conflictError(res, "redirectUrl already saved to this user");
+        return conflictError(res, "redirectUrl already saved");
       }
 
       const result = await this.shortUrlService.generateShortUrl(
@@ -64,9 +66,9 @@ export class ShortUrlController {
         );
       }
 
-      const result = await this.shortUrlService.delete(shortUrlId);
+      await this.shortUrlService.delete(shortUrlId);
 
-      return ok(res, result);
+      return ok(res, "Short URL deleted succesfully!");
     } catch (error) {
       return serverError(res, error);
     }
@@ -96,6 +98,29 @@ export class ShortUrlController {
       );
 
       return ok(res, result);
+    } catch (error) {
+      return serverError(res, error);
+    }
+  };
+
+  visitShortUrl = async (req: Request, res: Response) => {
+    try {
+      const { shortId } = req.params;
+
+      const redirectUrlFound = await this.shortUrlService.find({
+        shortId: `${SHORT_URL_DOMAIN}/${shortId}`
+      });
+
+      if (!redirectUrlFound) {
+        return notFoundError(res, "URL not found");
+      }
+
+      await this.shortUrlService.incrementVisits(
+        redirectUrlFound.id,
+        redirectUrlFound.totalVisits
+      );
+
+      return redirect(res, redirectUrlFound.redirectUrl);
     } catch (error) {
       return serverError(res, error);
     }
