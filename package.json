@@ -5,6 +5,9 @@
   "directories": {
     "test": "tests"
   },
+  "engines": {
+    "node": ">=18.14.0"
+  },
   "scripts": {
     "build": "npx rimraf dist && npx tsc -p tsconfig-build.json",
     "test": "vitest run",
