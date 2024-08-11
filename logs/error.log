@@ -1,0 +1,11 @@
+
+Invalid `this.client.user.findFirst()` invocation in
+/home/matheus/documents/encurtador-de-links/src/infra/repositories/user-repository.ts:26:31
+
+  23 
+  24 async find(user: User) {
+  25   try {
+→ 26     return this.client.user.findFirst(
+Can't reach database server at `localhost:5432`
+
+Please make sure your database server is running at `localhost:5432`.

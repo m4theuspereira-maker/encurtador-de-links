@@ -1,10 +1,14 @@
-export class InternalServerErrorExpection implements Error {
-    name: string;
-    message: string;
+import { logger } from "../../config/logger";
 
-    constructor(error: any) {
-        this.name = error.name;
-        this.message = error.message || INTERNAL_SERVER_ERROR_MESSAGE;
-    }
+export class InternalServerErrorExpection implements Error {
+  name: string;
+  message: string;
+
+  constructor(error: unknown) {
+    logger.error(error);
+    this.name = "InternalServerErrorExpection";
+    this.message = INTERNAL_SERVER_ERROR_MESSAGE;
+  }
 }
-export const INTERNAL_SERVER_ERROR_MESSAGE = 'Internal Server Error, see the logs to get more informations';
+export const INTERNAL_SERVER_ERROR_MESSAGE =
+  "Internal Server Error, see the logs to get more informations";
