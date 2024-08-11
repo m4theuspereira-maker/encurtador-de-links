@@ -23,7 +23,7 @@ export class ShortUrlController {
       });
 
       if (redirectUrlFound) {
-        return conflictError(res, "redirectUrl already saved");
+        return ok(res, redirectUrlFound.shortId);
       }
 
       const result = await this.shortUrlService.generateShortUrl(
