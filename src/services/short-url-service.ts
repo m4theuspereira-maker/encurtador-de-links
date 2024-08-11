@@ -16,13 +16,13 @@ export class ShortUrlService {
         await this.generateShortUrl(redirectUrl, userId);
       }
 
-      return (
-        await this.shortUrlRepository.createShortUrl(
-          `${SHORT_URL_DOMAIN}/${shortId}`,
-          redirectUrl,
-          userId || null
-        )
-      ).shortId;
+      const result = await this.shortUrlRepository.createShortUrl(
+        `${SHORT_URL_DOMAIN}/${shortId}`,
+        redirectUrl,
+        userId || null
+      );
+
+      return result.shortId;
     } catch (error) {
       throw new InternalServerErrorExpection(error);
     }
@@ -77,7 +77,7 @@ export class ShortUrlService {
     }
   }
 
-  private generateShortId() {
+  generateShortId() {
     let firstPart = (Math.random() * 46656) | 0;
     let secondPart = (Math.random() * 46656) | 0;
     return (
