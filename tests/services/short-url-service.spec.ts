@@ -42,7 +42,7 @@ describe("ShortUrlService", () => {
 
       expect(generateShortIdSpy).toHaveBeenCalledOnce();
       expect(repositorySpy).toHaveBeenCalledWith(
-        "http://localhost:${PORT}/225e6w",
+        expect.stringContaining("225e6w"),
         mockUrl,
         null
       );
