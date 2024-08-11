@@ -1,4 +1,4 @@
-import express, { json, urlencoded } from "express";
+import express, { json, Request, urlencoded } from "express";
 import cors from "cors";
 import { routes } from "./routes";
 import swaggerUi from "swagger-ui-express";

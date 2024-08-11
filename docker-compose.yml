@@ -1,17 +1,42 @@
-version: "3.7"
-
 services:
-  database:
-    image: postgres
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: node-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - database
+    networks:
+      - app-network
     volumes:
-      - ./private/var/lib/postgresql:/var/lib/postgresql
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    command: >
+      sh -c "
+      npx prisma migrate deploy &&
+      npm start
+      "
+
+  database:
+    image: postgres:13
+    container_name: postgres-db
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     networks:
-      - encurtador-de-links-network
+      - app-network
+
 networks:
-  encurtador-de-links-network:
+  app-network:
     driver: bridge
+
+volumes:
+  postgres-data:

@@ -66,8 +66,10 @@ export class ShortUrlService {
 
   async incrementVisits(id: string, totalVisits: number) {
     try {
+      totalVisits++;
+
       await this.shortUrlRepository.update(id, {
-        totalVisits: totalVisits++,
+        totalVisits,
         lastVisit: new Date()
       });
     } catch (error) {

@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "description": ""
   },
-  "host": "localhost:3001",
+  "host": "localhost:3000",
   "basePath": "/",
   "schemes": ["http"],
   "paths": {
@@ -432,44 +432,6 @@
           },
           "401": {
             "description": "Unauthorized request"
-          },
-          "404": {
-            "description": "Short URL not found"
-          },
-          "500": {
-            "description": "Internal server error"
-          }
-        }
-      }
-    },
-    "/{shortId}": {
-      "get": {
-        "summary": "Redirect to the original URL",
-        "description": "This endpoint redirects the user to the original URL associated with the short URL.",
-        "tags": ["shortUrl"],
-        "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "shortId",
-            "in": "path",
-            "required": true,
-            "description": "The short ID of the URL",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "301": {
-            "description": "Redirect",
-            "headers": {
-              "Location": {
-                "description": "The URL to which the client is redirected",
-                "type": "string"
-              },
-              "Access-Control-Allow-Origin": {
-                "description": "CORS allowed origin",
-                "type": "string"
-              }
-            }
           },
           "404": {
             "description": "Short URL not found"

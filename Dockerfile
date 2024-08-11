@@ -1,13 +1,12 @@
-FROM node:18-alpine
+# Use a imagem base Node.js
+FROM node:latest
 
-ENV NODE_ENV production
+WORKDIR /usr/src/app
 
-WORKDIR /app
+COPY package*.json .
 
-COPY dist /app/
-COPY node_modules /app/node_modules
-COPY yarn.lock /app/yarn.lock
+RUN npm install
 
-CMD ["node", "./index.js"]
+COPY . .
 
-EXPOSE 3000
+RUN npm run build
